@@ -1,0 +1,135 @@
+
+
+Question 3.1
+library('kernlab')
+library('kknn')
+library('purrr')
+
+set.seed(42)
+
+data=read.csv("credit_card_data-headers.txt", sep='\t',header=TRUE)
+
+
+kknn_func=function(kx) {
+percent_correct=0.0
+for (i in 1:6) {
+ start=(i-1)*109+1
+ end=(i*109)
+ test_range=(start:end)
+   hh=kknn(R1 ~ ., data[-test_range,], data[test_range,], k=kx, scale=TRUE)
+   fit=fitted(hh)
+   q=unlist(map(fit, function(x) { if (x >= 0.5) 1 else 0 }))
+   a=table(data[test_range,]$R1, q)
+
+   sum=0
+   if (dim(a)[1]==2) {
+      sum=a[[1,2]]+a[[2,1]]
+   }
+   else {
+      sum=a[[1,2]]
+   }
+   corr=(length(q)-sum)/length(q)
+   percent_correct=percent_correct+corr
+ }
+ percent_correct=percent_correct/6
+ print(percent_correct)
+ return(percent_correct)
+}
+
+max=-1.0
+p_corr=0.0
+current_k=-1
+for (i in 1:10) {
+  p_corr=kknn_func(i)
+  if (p_corr> max) {
+     current_k=i
+     max=p_corr
+  }
+}
+for (i in seq(20,100,10)) {
+  p_corr=kknn_func(i)
+  if (p_corr> max) {
+     current_k=i
+     max=p_corr
+  }
+}
+print('best kx')
+print(current_k)
+print('average correct')
+print(max)
+
+ANSWER:  kx=10
+
+Figure out actual error
+
+val=sample(1:nrow(data), 400, replace=FALSE)
+kknn_func=function(kx) {
+   hh=kknn(R1 ~ ., data[val,], data[-val,], k=kx, scale=TRUE)
+   fit=fitted(hh)
+   q=unlist(map(fit, function(x) { if (x >= 0.5) 1 else 0 }))
+   a=table(data[-val,]$R1, q)
+   print(  (length(q)-(a[[1,2]]+a[[2,1]]))/length(q))
+}
+kknn_func(10)
+
+ANSWER:  Actual percentage correct: 0.8740157
+
+
+Question 4.1
+
+Cluster days of the week by the following predicators
+
+whether you are thinking about work (binary), 
+amount of hours work on class assignments
+sleeping in past 8am
+number of hours going to be before midnight
+perparing clothes for work (binary)
+
+Question 4.2
+
+There are three levels in the data d[,5]
+Levels: Iris-setosa Iris-versicolor Iris-virginica
+
+kmeans(d[,1:4],3)
+
+#elbow diagram
+library('purrr')
+d=read.csv("iris.data",sep=",", header=TRUE)
+set.seed(99)
+km=function(k) { kmeans(d[,1:4],k,nstart=25)$tot.withinss}
+r=1:20
+out=r %>% map(km)
+out around the sixth number is a good value were we do not advance by adding clusters
+
+kmeans(d[,1:4],k,nstart=25)
+
+Gives the following cluster assignments for points (Clustering vector)
+
+> kmeans(d[,1:4],6,nstart=25)
+K-means clustering with 6 clusters of sizes 25, 25, 24, 39, 12, 24
+
+Cluster means:
+      X5.1     X3.5     X1.4      X0.2
+1 5.272000 3.688000 1.508000 0.2960000
+2 5.508000 2.600000 3.908000 1.2040000
+3 4.725000 3.133333 1.420833 0.1916667
+4 6.207692 2.853846 4.746154 1.5641026
+5 7.475000 3.125000 6.300000 2.0500000
+6 6.529167 3.058333 5.508333 2.1625000
+
+Clustering vector:
+  [1] 3 3 3 1 1 3 3 3 3 1 3 3 3 1 1 1 1 1 1 1 1 3 1 3 3 1 1 1 3 3 1 1 1 3 3 1 3
+ [38] 3 1 1 3 3 1 1 3 1 3 1 3 4 4 4 2 4 4 4 2 4 2 2 4 2 4 2 4 4 2 4 2 4 2 4 4 4
+ [75] 4 4 4 4 2 2 2 2 4 2 4 4 4 2 2 2 4 2 2 2 2 2 4 2 2 6 4 5 6 6 5 2 5 6 5 6 6
+[112] 6 4 6 6 6 5 5 4 6 4 5 4 6 5 4 4 6 5 5 5 6 4 4 5 6 6 4 6 6 6 4 6 6 6 4 6 6
+[149] 4
+
+A good supplement to the lecture notes is this site:  https://uc-r.github.io/kmeans_clustering
+
+#The following plots the clusters against the first two principal components
+install.packages('factoextra')
+library(factoextra)
+b=kmeans(d[,1:4],6,nstart=25)
+fviz_cluster(b, data =d)
+fviz_cluster(b, data =d[,1:4])
+

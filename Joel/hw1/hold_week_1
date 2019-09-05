@@ -1,0 +1,120 @@
+https://github.com/ylc0006/GTx-ISYE6501x-GT-Introduction-to-Analytics-Modeling-WK1/blob/master/HW1-Q2-1.R
+
+Question 2.1
+
+A good weekend could be predicted for my family with the following predictors:
+
+My kids get appropriate sleep
+My kids do not eat too much sugar
+We have money to do an activity
+We do not have an overwhelming amount of chores to do
+The weather is nice if we do not have money for an activity indoors
+
+Question 2.2 
+
+Part I
+
+
+A = matrix( c(2, 4, 3, 1, 5, 7, 1,1,1,1,1,1),nrow=2,ncol=6,byrow=TRUE)
+
+     [,1] [,2] [,3] [,4] [,5] [,6]
+[1,]    2    4    3    1    5    7
+[2,]    1    1    1    1    1    1
+
+p= c(1,2.1,8,9,5,3.2)
+
+A*p
+     [,1] [,2] [,3] [,4] [,5] [,6]
+[1,]  2.0   32 15.0  1.0   40 35.0
+[2,]  2.1    9  3.2  2.1    9  3.2
+
+p=c(2,1.2)
+A*p
+     [,1] [,2] [,3] [,4] [,5] [,6]
+[1,]  4.0  8.0  6.0  2.0 10.0 14.0
+[2,]  1.2  1.2  1.2  1.2  1.2  1.2
+
+colSums(A*p)
+[1]  5.2  9.2  7.2  3.2 11.2 15.2
+
+So
+
+mode@xmatrix[[1]] is a 190X10 matrix of support vectors
+model@coef[[1]] is a numeric vector of length 190 (ai coefficients)
+
+
+CODE
+
+data=read.csv("file:///Users/burtwalsh/GATECH/credit_card_data-headers.txt", sep='\t',header=TRUE)
+
+library('kernlab')
+library('kknn')
+library('purrr')
+
+ksvm_func=function(c1) {
+   model <- ksvm(as.matrix(data[,1:10]),as.factor(data[,11]),type="C-svc",kernel="vanilladot",C=c1, scaled=TRUE)
+
+  #[[1]] to get at the values in the list
+  #xmatrix are the support vectors the points that touch the hyperplane
+  #xmatrix is 190 in our example (actually a 190 by 10) matrix of 190 support vectors
+  #
+  p <- colSums(model@xmatrix[[1]] * model@coef[[1]])
+  wrong=0
+  for (i in 1:nrow(data)) { 
+    q=(sum(p*data[i,1:10]) - model@b > 0)
+    if (q) { if (data[i,11] != 1) wrong = wrong + 1 } 
+    else { if (data[i,11] != 0) wrong = wrong + 1 } 
+  }
+  print((nrow(data)-wrong)/nrow(data))
+}
+
+TESTS
+
+Test with various C values and the associated error.  As C goes up and we allow for more slack the error rate goes up at 1000; it is pretty constant before then.
+
+ksvm_func(2)
+Error 0.6299694
+
+ksvm_func(20)
+Error 0.6314985
+
+ksvm_func(1)
+Error 0.6299694
+
+ksvm_func(2)
+Error 0.6299694
+
+ksvm_func(20)
+Error 0.6314985
+
+ksvm_func(100)
+Error 0.6314985
+
+ksvm_func(1000)
+Error 0.4525994
+
+
+PART II
+
+ksvm_func=function(c1) {
+   model <- ksvm(as.matrix(data[,1:10]),as.factor(data[,11]),type="C-svc",kernel="vanilladot",C=c1, scaled=TRUE)
+  p <- colSums(model@xmatrix[[1]] * model@coef[[1]])
+  wrong=0
+  for (i in 1:nrow(data)) { 
+    q=(sum(p*data[i,1:10]) - model@b > 0)
+    if (q) { if (data[i,11] != 1) wrong = wrong + 1 } 
+    else { if (data[i,11] != 0) wrong = wrong + 1 } 
+  }
+  print((nrow(data)-wrong)/nrow(data))
+}
+
+PART III
+
+val=sample(1:nrow(h), 400, replace=FALSE)
+kknn_func=function(kx) {
+   hh=kknn(R1 ~ ., data[val,], data[-val,], k=kx, scale=TRUE)
+   fit=fitted(hh)
+   q=unlist(map(fit, function(x) { if (x >= 0.5) 1 else 0 }))
+   a=table(data[-val,]$R1, q)
+   print(  (length(q)-(a[[1,2]]+a[[2,1]]))/length(q))
+}

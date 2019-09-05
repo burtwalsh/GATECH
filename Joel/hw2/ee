@@ -1,0 +1,95 @@
+
+
+Question 3.1
+library('kernlab')
+library('kknn')
+library('purrr')
+
+set.seed(42)
+
+data=read.csv("credit_card_data-headers.txt", sep='\t',header=TRUE)
+
+
+kknn_func=function(kx) {
+percent_correct=0.0
+for (i in 1:6) {
+ start=(i-1)*109+1
+ end=(i*109)
+ test_range=(start:end)
+   hh=kknn(R1 ~ ., data[-test_range,], data[test_range,], k=kx, scale=TRUE)
+   fit=fitted(hh)
+   q=unlist(map(fit, function(x) { if (x >= 0.5) 1 else 0 }))
+   a=table(data[test_range,]$R1, q)
+
+   sum=0
+   if (dim(a)[1]==2) {
+      sum=a[[1,2]]+a[[2,1]]
+   }
+   else {
+      sum=a[[1,2]]
+   }
+   corr=(length(q)-sum)/length(q)
+   percent_correct=percent_correct+corr
+ }
+ percent_correct=percent_correct/6
+ print(percent_correct)
+ return(percent_correct)
+}
+
+max=-1.0
+p_corr=0.0
+current_k=-1
+for (i in 1:10) {
+  p_corr=kknn_func(i)
+  if (p_corr> max) {
+     current_k=i
+     max=p_corr
+  }
+}
+for (i in seq(20,100,10)) {
+  p_corr=kknn_func(i)
+  if (p_corr> max) {
+     current_k=i
+     max=p_corr
+  }
+}
+print('best kx')
+print(current_k)
+print('average correct')
+print(max)
+
+Gave kx=10
+
+Figure out actual error
+
+val=sample(1:nrow(data), 400, replace=FALSE)
+kknn_func=function(kx) {
+   hh=kknn(R1 ~ ., data[val,], data[-val,], k=kx, scale=TRUE)
+   fit=fitted(hh)
+   q=unlist(map(fit, function(x) { if (x >= 0.5) 1 else 0 }))
+   a=table(data[-val,]$R1, q)
+   print(  (length(q)-(a[[1,2]]+a[[2,1]]))/length(q))
+}
+kknn_func(10)
+
+Actual percentage correct: 0.8740157
+
+
+Question 4.1
+
+Cluster days of the week by the following predicators
+
+whether you are thinking about work (binary), 
+amount of hours work on class assignments
+sleeping in past 8am
+number of hours going to be before midnight
+perparing clothes for work (binary)
+
+Question 4.2
+
+There are three levels in the data d[,5]
+Levels: Iris-setosa Iris-versicolor Iris-virginica
+
+d=read.csv("iris.data",sep=",", header=TRUE)
+kmeans(d[,1:4],3)
+

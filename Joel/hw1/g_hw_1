@@ -1,0 +1,189 @@
+---
+title: "Week1_Classification"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### QUESTION 2.1
+
+My son twisted his ankle in soccer game, so I had to take him to the hospital. 
+In hospitals, there are emergency checks, where each patient is pre examined by the doctor or some other medical person. 
+Whether the doctor deems that patient should be taken immediately to intensive-care unit or not depends on many factors, 
+for example blood pressure, severity of wounds, age, breathing difficulty, unconsciousness etc. 
+
+### QUESTION 2.2
+
+```{r}
+#install.packages("rio")
+library(rio)
+install_formats()
+
+data=import("credit_card_data-headers.txt",format="txt")
+head(data,10)
+dim(data)
+sapply(data, class)  # Checking class of the variables
+data$R1=as.factor(data$R1)  #Changing the class of the response data to factor
+```
+
+Doing the SVM classification
+
+
+```{r}
+library(kernlab)
+set.seed(123)
+data_as_matrix=as.matrix(data[,1:10])
+
+classifier <- ksvm(data_as_matrix[,1:10],y=data[,11],type="C-svc",kernel="vanilladot", C=100,scaled=TRUE)
+classifier
+```
+
+Training  error is 0.136, which means that model correctly predicted 86.4% of actual observations
+
+But how do we decide how costly these misclassifications actually are? Instead of specifying a cost up front, 
+we can use the tune() function from e1071 to test various costs and identify which value produces the best fitting model.
+```{r} 
+
+library(e1071)
+
+tune_out <- tune(method=svm, train.x=R1~., data = data, kernel = "linear",
+                 ranges = list(cost = c(0.001, 0.01, 0.1, 1, 5, 10, 100)))
+```
+extract the best model
+
+```{r}
+bestmod <- tune_out$best.model
+bestmod
+
+```
+
+From the costs of the list, 0.01 is the best
+
+Let's concentrate on the values near to 0.01:
+
+```{r}
+tune_out <- tune(method=svm, train.x=R1~., data = data, kernel = "linear",
+                 ranges = list(cost = c(0.002, 0.006, 0.01, 0.05, 0.07, 0.09)))
+```
+
+extract the best model
+
+```{r}
+bestmod <- tune_out$best.model
+bestmod
+```
+
+Best value for the cost is >0.002 and <0.01
+
+```{r}
+tune_out <- tune(method=svm, train.x=R1~., data = data, kernel = "linear",
+                 ranges = list(cost = seq(0.003,0.009)))
+```
+extract the best model
+
+```{r}
+bestmod <- tune_out$best.model
+bestmod
+```
+
+Best value for the cost is 0.003
+
+Lets use that value in our classifier:
+
+```{r}
+classifier2 <- ksvm(data_as_matrix[,1:10],y=data[,11],type="C-svc",kernel="vanilladot", C=0.003,scaled=TRUE)
+print(classifier2)
+```
+
+Training error is still 0.136 which is the same as when C was 100!!!
+
+Calculate weights for each of the 10 features:
+
+
+```{r}
+a <- colSums(classifier@xmatrix[[1]] * classifier@coef[[1]])
+a
+```
+calculate a0
+```{r}
+a0 <- classifier@b
+a0
+```
+
+
+Predicting the results
+
+```{r}
+pred = predict(classifier, newdata = data[1:10])
+```
+
+
+Making the Confusion Matrix
+
+```{r}
+cm = table(data[, 11], pred)
+print(cm)
+print(sum(pred == data[,11]) / nrow(data))
+
+```
+
+
+Our classifier predicted about 86.4% of observations correctly. We can get the same figure by subtracting the training error (0.136) from 1
+
+### QUESTION 2.3
+### USING THE K-NEAREST NEIGHBORS CLASSIFICATION
+```{r}
+
+library(kknn)
+#Setting seed to produce reproducible results
+set.seed(123)
+
+my_data=read.table("credit_card_data-headers.txt",header = T,sep='\t')
+```
+
+cREATE A FUNCTION WHICH CHECKS THE ACCURACY OF THE KNN MODEL WITH DIFFERENT NUMBER k OF NEAREST NEIGHBOURS:
+
+```{r}
+my_accuracies = function(X){
+  predicted <- rep(0,(nrow(my_data))) # create a vector, where all the predicted values of R1 are placed.Initialize it with zeros
+  
+  for (i in 1:nrow(my_data)){
+    
+    model=kknn(R1~.,my_data[-i,],my_data[i,],k=X, scale = TRUE) 
+    
+    # For each observation, find the nearest neighbours. Exclude the data for observation in question                                                                  
+    
+    predicted[i] <- fitted(model) 
+    
+  }
+  
+  pred=round(predicted)   # Round each value to 0 or 1: if the value is >=0.5, then the value is 1, otherwise 0
+  
+  # calculate fraction of correct predictions
+  total=sum(pred == data[,11]) / nrow(data)
+  return(total)
+  
+}
+```
+
+Lets invoke our function for k values between 1 and 30
+
+```{r}
+accuracy=rep(0,30) # Create a vector of length of 30 with zero  values
+for (n in 1:30){
+  accuracy[n] = my_accuracies(n) # Testing our model with different  values of k
+}
+```
+
+Choose the best k:
+
+```{r}
+plot(accuracy,main="K Nearest Neighbors", xlab="k",ylab="Accuracy")
+max(accuracy)
+which.max(accuracy)
+```
+
+
