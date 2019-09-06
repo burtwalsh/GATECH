@@ -1,0 +1,137 @@
+
+
+QQ-PLOTS
+Skewed right is not what you think it is (this toolkit is great)
+http://seankross.com/2016/02/29/A-Q-Q-Plot-Dissection-Kit.html
+
+Ok--around some terms but above is better (https://data.library.virginia.edu/diagnostic-plots/)
+
+
+F-VALUE
+Different in regsion and ANOVA
+https://www.statisticshowto.datasciencecentral.com/probability-and-statistics/f-statistic-value-test/
+
+In  regression
+The F value in regression is the result of a test where the null hypothesis is that all of the regression coefficients are equal to zero. In other words, the model has no predictive capability. Basically, the f-test compares your model with zero predictor variables (the intercept only model), and decides whether your added coefficients improved the model. If you get a significant result, then whatever coefficients you included in your model improved the model’s fit.
+
+Read your p-value first. If the p-value is small (less than your alpha level), you can accept the null hypothesis. Only then should you consider the f-value. If you fail to reject the null, discard the f-value result.
+****
+
+Class actually referenced this on interaction effects
+https://statisticsbyjim.com/regression/interaction-effects/
+Food/Condiment--interaction plot
+p-value 0.00000
+The crossed lines on the graph suggest that there is an interaction effect, which the significant p-value for the Food*Condiment term confirms.
+
+SE Coef
+The standard error of the coefficient estimates the variability between coefficient estimates that you would obtain if you took samples from the same population again and again. The calculation assumes that the sample size and the coefficients to estimate would remain the same if you sampled again and again.
+
+Use the standard error of the coefficient to measure the precision of the estimate of the coefficient. The smaller the standard error, the more precise the estimate. Dividing the coefficient by its standard error calculates a t-value. If the p-value associated with this t-statistic is less than your significance level, you conclude that the coefficient is statistically significant.
+
+T-value
+The t-value measures the ratio between the coefficient and its standard error (like standard deviation)
+
+
+https://www.statisticshowto.datasciencecentral.com/p-value/#targetText=The%20p%20value%20is%20the,value%20of%200.0254%20is%202.54%25.
+P-value
+What if I Don’t Have an Alpha Level?
+In an ideal world, you’ll have an alpha level. But if you do not, you can still use the following rough guidelines in deciding whether to support or reject the null hypothesis:
+
+If p > .10 → “not significant”
+If p ≤ .10 → “marginally significant”
+If p ≤ .05 → “significant”
+If p ≤ .01 → “highly significant.”
+
+
+Understanding R^2
+https://blog.minitab.com/blog/adventures-in-statistics-2/regression-analysis-how-do-i-interpret-r-squared-and-assess-the-goodness-of-fit
+
+
+
+
+********************* BEST **********************
+https://support.minitab.com/en-us/minitab/18/help-and-how-to/modeling-statistics/regression/supporting-topics/regression-models/model-reduction/
+****Example of how multicollinearity interferes with the statistical significance criterion****
+
+
+A team at a medical facility develops a model to predict patient satisfaction scores. The model has several variables, including the time patients are with a practitioner and the time patients are in medical tests. With both of these variables in the model, the multicollinearity is high, with VIF (variance inflation factor) values of 8.91. Values greater than 5 usually indicate severe multicollinearity. The p-value for the amount of time that patients are with a practitioner is 0.105, which is not significant at the 0.05 level. The predicted R2 value for this model is 22.9%.
+
+Regression Analysis: Satisfaction versus Practitioner Time, Test Time
+
+
+Model Summary
+
+       S    R-sq  R-sq(adj)  R-sq(pred)
+0.951953  28.68%     25.64%      22.91%
+
+Coefficients
+
+Term                 Coef  SE Coef  T-Value  P-Value   VIF
+Constant           -0.078    0.156    -0.50    0.618
+Practitioner Time  0.1071   0.0648     1.65    0.105  8.91
+Test Time          -0.516    0.178    -2.90    0.006  8.91
+
+The predicted R2 value for the model with only test time drops from 22.9% to 10.6%. Although the time patients are with a practitioner is not statistically significant at the 0.05 level, including that variable more than doubles the predicted R2 value. The high multicollinearity could be hiding the importance of the predictor.
+
+Regression Analysis: Satisfaction versus Test Time
+
+
+Model Summary
+
+       S    R-sq  R-sq(adj)  R-sq(pred)
+0.968936  24.54%     22.96%      10.61%
+
+Coefficients
+
+Term          Coef  SE Coef  T-Value  P-Value   VIF
+Constant    -0.162    0.150    -1.08    0.285
+Test Time  -0.2395   0.0606    -3.95    0.000  1.00
+
+
+**VIF
+Multicollinearity
+Multicollinearity in regression is a condition that occurs when some predictor variables in the model are correlated with other predictor variables. Severe multicollinearity is problematic because it can increase the variance of the regression coefficients, making them unstable. When you remove a term that has high multicollinearity, the statistical significance and values of the coefficients of highly correlated terms can change considerably.
+
+
+********************* BEST **********************
+
+************** NEXT ***************
+
+Example of ****REDUCING A MODEL**** in a simple case
+Technicians measure the total heat flux as part of a solar thermal energy test. An energy engineer wants to determine how total heat flux is predicted by other variables: insolation, the position of the focal points in the east, south, and north directions, and the time of day. Using the full regression model, the engineer determines the following relationship between heat flux and the variables.
+
+
+Regression Equation
+
+Heat Flux = 325.4 + 2.55 East + 3.80 South - 22.95 North + 0.0675 Insolation
+            + 2.42 Time of Day
+
+Coefficients
+
+Term           Coef  SE Coef  T-Value  P-Value   VIF
+Constant      325.4     96.1     3.39    0.003
+East           2.55     1.25     2.04    0.053  1.36
+South          3.80     1.46     2.60    0.016  3.18
+North        -22.95     2.70    -8.49    0.000  2.61
+Insolation   0.0675   0.0290     2.33    0.029  2.32
+Time of Day    2.42     1.81     1.34    0.194  5.37
+The engineer wants to eliminate as many insignificant terms as possible to maximize the precision of predictions. 
+
+$$$$$$$$ REDUX ******
+The engineer decides to use 0.05 as the threshold for statistical significance. The p-value for Time of Day (0.194) is the highest p-value that is greater than 0.05, so the engineer removes this term first. 
+$$$$$$$$ REDUX ******
+
+The engineer repeats the regression, removing one insignificant term each time, until only statistically significant terms remain. The final reduced model is as follows:
+
+
+Regression Equation
+
+Heat Flux = 483.7 + 4.796 South - 24.22 North
+
+Coefficients
+
+Term        Coef  SE Coef  T-Value  P-Value   VIF
+Constant   483.7     39.6    12.22    0.000
+South      4.796    0.951     5.04    0.000  1.09
+
+************** NEXT ***************
