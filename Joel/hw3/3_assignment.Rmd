@@ -1,0 +1,120 @@
+---
+title: "Assignment Three"
+runtime: shiny
+output: html_document
+---
+
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+## Question 5.1
+
+### Grubbs.test to find outliers
+
+#### Plot the original data to see the outlier
+
+```{r}
+UScrime <- read.delim("http://www.statsci.org/data/general/uscrime.txt")
+crime_info=UScrime[,'Crime']
+crime_vector=as.integer(unlist(crime_info[1]))
+library('outliers')
+grubbs.test(crime_info,10)
+summary(crime_info)
+plot(crime_info)
+```
+
+### Elbow Graph for optimal number of clusters
+#### Great reference https://uc-r.github.io/kmeans_clustering
+#### Deep analysis for optimal clusters \
+#### https://www.r-bloggers.com/finding-optimal-number-of-clusters/
+
+```{r}
+library(purrr)
+set.seed(123)
+
+# function to compute total within-cluster sum of square 
+k_means=function(k) {
+  kmeans(crime_info, k, nstart = 10 )$tot.withinss
+}
+
+range_of_k <- 1:20
+
+withinss <- map(range_of_k, k_means)
+
+plot(range_of_k, withinss,
+       type="b", pch = 19, frame = FALSE, 
+       xlab="Number of clusters K",
+       ylab="Total within-clusters sum of squares")
+```
+
+## Show clusters
+#### print clusters https://www.r-bloggers.com/k-means-clustering-in-r/
+
+```{r}
+library(fpc)
+km_final=kmeans(crime_info, 5, nstart = 10)
+km_final$cluster <- as.factor(km_final$cluster)
+plotcluster(crime_info,km_final$cluster)
+```
+
+## Question 6.1
+
+I am a very average poker player but like most would love to get better.  I do not have unlimted bugdet but like to challenge myself at the highest level beyond my talents.  As I can not go broke but need experience so I need to monitor my budget (stack) which has to be of a bigger size that I am willing to lose to get into higher valued games.  Further there is randomness that effects my staff even if I am playing well as people get lucky with cards.  CUSUM can be used to set a mean and a tolerance so that if I am playing well of poorly and losing on bad beats I can stop for the day and live to fight another day.
+
+Take the mean to be the loss of my skill level on a full level 10 hands (say this is 2 times what is called the big blind).  Take the threshold to be twice the mean.  If I break the threshold I am done for the day.
+
+## Question 6.2
+### reference https://itl.nist.gov/div898/handbook/pmc/section3/pmc323.htm
+### good reference https://www.measurementlab.net/publications/CUSUMAnomalyDetection.pdf
+
+1.  Answer from the average of each day over all years is day 112 which is 112-62-30=20
+
+October 20th this seems late
+
+```{r}
+a=read.csv("1862052.csv")
+m=matrix(unlist(strsplit(as.character(a$DATE),'-')), ncol=3,byrow=TRUE)
+b=data.frame(m)
+b$TMAX=a$TMAX
+y=b[grep("07|08|09|10", b$X2),]
+colnames(y)<-c("Year","Month","Day","Temp")
+y=y[!grepl('2016',y$Year),]
+
+
+#qcc not used cusum(data=y$Temp, center=mean(y$Temp), std.dev=sd(y$Temp), decision.interval = 5)
+
+library(tidyverse)
+hu=y %>% group_by(Month,Day) %>% summarize(mean(Temp)) %>% data.frame
+colnames(hu)<-c('Month','Day','Temp')
+mu=mean(hu$Temp)
+k=sd(hu$Temp)
+T=4*sd(y$Temp)
+S=0;count=0; for (i in hu$Temp) { S=max(0,S+(mu-i-k)); count=count+1 ;if (S > T) { print(S); print(count); break;} }
+```
+
+
+2.  Use a CUSUM approach to make a judgment of whether Atlanta’s summer climate has gotten
+warmer in that time (and if so, when).
+
+I think my conclusion is wrong as it does not say that Atlanta is warming.
+With T equal k it does though in 2012
+```{r}
+library(tidyverse)
+a=read.csv("1862052.csv")
+m=matrix(unlist(strsplit(as.character(a$DATE),'-')), ncol=3,byrow=TRUE)
+b=data.frame(m)
+b$TMAX=a$TMAX
+y=b
+colnames(y)<-c("Year","Month","Day","Temp")
+y=y[!grepl('2016',y$Year),]
+hu=y %>% group_by(Year) %>% summarize(mean(Temp)) %>% data.frame
+colnames(hu)<-c('Year','Temp')
+mu=mean(hu$Temp)
+k=sd(hu$Temp)
+T=4*k
+S=0;count=0; for (i in hu$Temp) { S=max(0,S+(i-mu-k)); count=count+1 ;if (S > T) { print(S); print(count); break;} }
+hu
+```
+
+
