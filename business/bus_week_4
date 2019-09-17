@@ -1,0 +1,58 @@
+library(dplyr)
+
+df <- ISLR::Default 
+
+stdt=ifelse(df$student=='Yes',1,0)
+df$stdt=ifelse(df$student=='Yes',1,0)
+dft=ifelse(df$default=='Yes',1,0)
+df$dft=ifelse(df$default=='Yes',1,0)
+
+Model4 <- glm(dft ~ balance + income + stdt, data = df, family = "binomial")
+
+#Mutate adds new variables and preserves existing
+#predict take newdata and apply it as the independent variable for Model4
+df <- df %>% mutate(pred_prob_model4 = predict(Model4, newdata = ., type = "response")) %>% mutate(pred_outcome_model4 = ifelse(pred_prob_model4 >= 0.5,1,0))
+
+#print confusion matrix
+xtabs(~dft + pred_outcome_model4, data = df)
+
+df <- df %>% mutate(pred_prob_model4 = predict(Model4, newdata = ., type = "response")) %>% mutate(pred_outcome_model4 = ifelse(pred_prob_model4 >= 0.9,1,0))
+
+xtabs(~dft + pred_outcome_model4, data = df)
+
+PART II
+
+if (!require(ggExtra))install.packages("ggExtra")
+library("ggExtra")
+if (!require(ROCR)) install.packages("ROCR")
+library("ROCR")
+
+#TEST
+pred <- prediction(df$pred_prob_model4[1:3],df$dft[1:3])
+
+#formater
+pred <- prediction(df$pred_prob_model4,df$dft)
+perf <- performance(pred, "tpr", "fpr") 
+
+auc.perf <- performance(pred, measure = "auc")
+auc.perf@y.values
+
+
+NEXT LECTURE
+
+library(Ecdat)
+Ecdat::Star
+
+mydata <- dplyr::filter(Ecdat::Star, classk=="small.class"|classk=="regular")
+mydata$small=ifelse(mydata$classk=='small.class',1,0)
+mydata$boy=ifelse(mydata$sex=='boy',1,0)
+mydata$whiteother=ifelse(mydata$race=='white'|mydata$race=='other',1,0)
+mydata$freelunch=ifelse(mydata$freelunk=='yes',1,0)
+mydata$totalscore=mydata$tmathssk+mydata$treadssk
+
+#break down of values (including min q, 1st q where appropriate)
+summary(mydata)
+lm(small~boy+whiteother+totexpk+freelunch, data=mydata)
+
+
+
