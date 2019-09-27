@@ -1,0 +1,71 @@
+---
+title: "Solutions_Q_8"
+#runtime: shiny
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 8.1
+
+The dependent variable would be an indicator of the families' enjoyment on our summer vacation.  The independent variables would be average temperature, if we could get to the location easily on a scale (driving, train, airplane), how much money we had saved during the year indicating money would could spend, if other family members could come along (which could be negative for some and positive for others!)
+
+# Question 8.2
+
+For a model with all variables...
+
+The  Multiple R-squared:  is 0.8031  which indicates is RSS/TSS meaning about 80% of the variance is explained by regression overall variables.
+
+I did not scale the data but did remove terms that had a Pr(>|t|) over 0.05 iteratively as they violated the null hypothesis that the particular coefficient was not zero.
+
+Removing variables still leaves us with 76% R-squared.  The final regression was
+
+pred<-lm(Crime~M+Ed+Po1+U2+Ineq+Prob,data=dat)
+
+
+```{r}
+dat=read.csv("~/o.csv", header=TRUE)
+pred<-lm(Crime~M+So+Ed+Po1+Po2+LF+M.F+Pop+NW+U1+U2+Wealth+Ineq+Prob+Time,data=dat)
+
+pred<-lm(Crime~M+Ed+Po1+Po2+LF+M.F+Pop+NW+U1+U2+Wealth+Ineq+Prob+Time,data=dat)
+pred<-lm(Crime~M+Ed+Po1+Po2+LF+M.F+Pop+NW+U1+U2+Wealth+Ineq+Prob,data=dat)
+pred<-lm(Crime~M+Ed+Po1+Po2+M.F+Pop+NW+U1+U2+Wealth+Ineq+Prob,data=dat)
+pred<-lm(Crime~M+Ed+Po1+Po2+M.F+Pop+U1+U2+Wealth+Ineq+Prob,data=dat)
+pred<-lm(Crime~M+Ed+Po1+M.F+Pop+U1+U2+Wealth+Ineq+Prob,data=dat)
+pred<-lm(Crime~M+Ed+Po1+M.F+U1+U2+Wealth+Ineq+Prob,data=dat)
+pred<-lm(Crime~M+Ed+Po1+M.F+U1+U2+Ineq+Prob,data=dat)
+pred<-lm(Crime~M+Ed+Po1+U1+U2+Ineq+Prob,data=dat)
+pred<-lm(Crime~M+Ed+Po1+U2+Ineq+Prob,data=dat)
+
+summary(pred)
+```
+
+Doing PCA on the dataset
+
+```{r}
+dat=read.csv("~/o.csv", header=TRUE)
+pca_mine=prcomp(dat)
+summary(pca_mine)
+```
+
+Indicates that almost 90% of the variance is in the first two components (0.9987).  
+
+# Not PART OF 8.2 (Question for me to explore)
+
+# Two great examples for the reconstruction
+# https://stats.stackexchange.com/questions/229092/how-to-reverse-pca-and-reconstruct-original-variables-from-several-principal-com
+# https://stats.stackexchange.com/questions/57467/how-to-perform-dimensionality-reduction-with-pca-in-r/57478#57478
+
+Some of the variables that were pulled out do to the null hypothesis on the coefficient being zero are present and large in PC1  
+
+```{r}
+nComp = 2
+mu=colMeans(dat)
+X = pca_mine$x[,1:nComp] %*% t(pca_mine$rotation[,1:nComp])
+X = scale(X, center = -mu, scale = FALSE)
+h=X[1,]
+```
+
+

@@ -1,0 +1,7 @@
+ols_step_backward_aic(model, ...)
+
+Removes variables on AIC penalty for more variables model (not Bayesian)
+
+AIC = 2*number of estimate params - 2 LN(maximum likelyhood function)
+
+Maximum likelihood estimation is a method that determines values for the parameters of a model. The parameter values are found such that they maximise the likelihood that the process described by the model produced the data that were actually observed.
