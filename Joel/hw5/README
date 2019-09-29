@@ -1,4 +1,9 @@
-ols_step_backward_aic(model, ...)
+install.packages('olsrr')
+library(olsrr)
+
+
+h=ols_step_backward_aic(lm(Crime~.,data=us))
+h$model
 
 Removes variables on AIC penalty for more variables model (not Bayesian)
 
