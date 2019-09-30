@@ -1,0 +1,94 @@
+
+
+https://rpubs.com/mstapleton6/HW6-PCA
+https://stats.stackexchange.com/questions/229092/how-to-reverse-pca-and-reconstruct-original-variables-from-several-principal-com
+
+
+
+#d=read.csv("uscrime.csv")
+
+a=c(100,200,300)
+b=c(110,180,290)
+c=c(80,130,200)
+dat=cbind(a,b, c)
+
+
+FIRST TEST
+
+****Gets us back****
+
+mu=colMeans(dat)
+Xpca=prcomp(dat)
+hu=Xpca$x %*% t(Xpca$rotation)
+
+Playing with lines***
+
+lm(c~.,data=as.data.frame(dat))
+y=function(a,b){ 2.5 + 0.0625*a + 0.625*b }
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)
+(Intercept)   2.5000     4.3301   0.577    0.667
+a             0.0625     0.2637   0.237    0.852
+b             0.6250     0.2795   2.236    0.268
+
+y(100,110)
+77.5
+
+
+GOING AGAIN (without the dependent. Variable)
+
+pca=prcomp(dat[,-3], scale=TRUE, center=TRUE)
+
+PC1 has most of the variance (diagonal line). 99%
+
+Rotation (n x k) = (2 x 2):
+        PC1        PC2
+a 0.7071068 -0.7071068
+b 0.7071068  0.7071068
+
+
+rr=lm(dat[,3]~pca$x[,1])
+
+Coefficients:
+(Intercept)   pca$x[, 1]  
+     136.67        42.69  
+
+
+NOTE::::::
+
+pca$rotation
+        PC1        PC2
+a 0.7071068 -0.7071068
+b 0.7071068  0.7071068
+
+NOTE::::::
+
+a and b
+alpha=pca$rotation[,1] *rr$coefficients[2]
+sigma=sapply(as.data.frame(dat[,-3]),sd)
+
+AX+b
+
+A=pca$rotation[,1] *rr$coefficients[2]/(sigma)
+> A
+        a         b 
+0.3018443 0.3326558 
+
+B=rr$coefficients[1]-sum(alpha*mu/sigma)
+
+
+ fy=function(a,b) { 43.15493 + 0.3018443*a + 0.3326558*b}
+
+
+       a   b   c
+[1,] 100 110  80
+[2,] 200 180 130
+[3,] 300 290 200
+> fy(100,110)
+[1] 109.9315
+> fy(200,180)
+[1] 163.4018
+> fy(300,290)
+[1] 230.1784
+
