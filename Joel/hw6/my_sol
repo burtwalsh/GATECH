@@ -1,9 +1,18 @@
 ******
 
-LOGIT
+LOGIT (really good full)
 https://stats.idre.ucla.edu/r/dae/logit-regression/
 
+
+&&&&
+https://towardsdatascience.com/understanding-auc-roc-curve-68b2303cc9c5
 https://developers.google.com/machine-learning/crash-course/classification/roc-and-auc
+
+An ROC curve (receiver operating characteristic curve) is a graph showing the performance of a classification model at all classification thresholds. This curve plots two parameters:
+
+True Positive Rate=TP/(TP+FN)=TP/(all really positive)
+False Positive Rate=FP/(TN+FP)=FP/(all really negative)
+&&&&
 
 > a=read.csv("uscrime.csv")
 > a$n=ifelse(a$Crime > 1000,1,0) 
