@@ -62,9 +62,12 @@ library(SDMTools)
 When AUC is 0.7, it means there is 70% chance that model will be able to distinguish between positive class and negative class.
 This is the worst situation. When AUC is approximately 0.5, model has no discrimination capacity to distinguish between positive class and negative class.
 
-PLOT--is TPR verse FPR  1 perfect seperation .5 no classification ability
+$$$KEY
+CONFUSION MATRIX IS A PLOT OF 
 
-
+TPR verse FPR  1 perfect seperation .5 no classification ability
+CHANGING THE CUTOFF FOR THE LOGIT
+$$$KEY
 
 
 PCA
