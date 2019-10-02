@@ -1,6 +1,9 @@
 ******
 
 LOGIT
+https://stats.idre.ucla.edu/r/dae/logit-regression/
+
+https://developers.google.com/machine-learning/crash-course/classification/roc-and-auc
 
 > a=read.csv("uscrime.csv")
 > a$n=ifelse(a$Crime > 1000,1,0) 
