@@ -1,4 +1,111 @@
+******
 
+LOGIT
+
+> a=read.csv("uscrime.csv")
+> a$n=ifelse(a$Crime > 1000,1,0) 
+> head(a)
+     M So   Ed  Po1  Po2    LF   M.F Pop   NW    U1  U2 Wealth Ineq     Prob
+1 15.1  1  9.1  5.8  5.6 0.510  95.0  33 30.1 0.108 4.1   3940 26.1 0.084602
+2 14.3  0 11.3 10.3  9.5 0.583 101.2  13 10.2 0.096 3.6   5570 19.4 0.029599
+3 14.2  1  8.9  4.5  4.4 0.533  96.9  18 21.9 0.094 3.3   3180 25.0 0.083401
+4 13.6  0 12.1 14.9 14.1 0.577  99.4 157  8.0 0.102 3.9   6730 16.7 0.015801
+5 14.1  0 12.1 10.9 10.1 0.591  98.5  18  3.0 0.091 2.0   5780 17.4 0.041399
+6 12.1  0 11.0 11.8 11.5 0.547  96.4  25  4.4 0.084 2.9   6890 12.6 0.034201
+     Time Crime n
+1 26.2011   791 0
+2 25.2999  1635 1
+3 24.3006   578 0
+4 29.9012  1969 1
+5 21.2998  1234 1
+6 20.9995   682 0
+> mylogit <- glm(n ~ Time + U2 + Pop, data = a, family = "binomial")
+> summary(mylogit)
+
+Call:
+glm(formula = n ~ Time + U2 + Pop, family = "binomial", data = a)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.4800  -0.7921  -0.6609   0.7977   1.9406  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept) -2.26357    1.95736  -1.156   0.2475  
+Time         0.03337    0.05472   0.610   0.5420  
+U2          -0.05979    0.42128  -0.142   0.8871  
+Pop          0.01772    0.01077   1.646   0.0998 .
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 57.251  on 46  degrees of freedom
+Residual deviance: 51.348  on 43  degrees of freedom
+AIC: 59.348
+
+Number of Fisher Scoring iterations: 4
+*****
+
+https://towardsdatascience.com/understanding-auc-roc-curve-68b2303cc9c5
+Area Under Curve
+Sensitivity = True Positive Rate = TP/(TP+FN)
+Specificity=TN/(TN+FP)
+False Positive Rate = FPR = 1-Specificity=FP/(TN+FP)
+
+library(PresenceAbsence)
+https://www.rdocumentation.org/packages/PresenceAbsence/versions/1.1.9/topics/auc.roc.plot
+
+library(SDMTools)
+***confusion.matrix(SIM3DATA$Observed, SIM3DATA$Predicted1)***
+
+When AUC is 0.7, it means there is 70% chance that model will be able to distinguish between positive class and negative class.
+This is the worst situation. When AUC is approximately 0.5, model has no discrimination capacity to distinguish between positive class and negative class.
+
+PLOT--is TPR verse FPR  1 perfect seperation .5 no classification ability
+
+
+
+
+PCA
+pca$x is the original data in the form of the PCA vectors
+pca$rotation is the definition of the pca in the original factors
+
+(but data has been scaled and centered)
+
+               PC1         PC2           PC3         PC4         PC5
+M      -0.30371194  0.06280357  0.1724199946 -0.02035537 -0.35832737
+So     -0.33088129 -0.15837219  0.0155433104  0.29247181 -0.12061130
+Ed      0.33962148  0.21461152  0.0677396249  0.07974375 -0.02442839
+Po1     0.30863412 -0.26981761  0.0506458161  0.33325059 -0.23527680
+Po2     0.31099285 -0.26396300  0.0530651173  0.35192809 -0.20473383
+LF      0.17617757  0.31943042  0.2715301768 -0.14326529 -0.39407588
+M.F     0.11638221  0.39434428 -0.2031621598  0.01048029 -0.57877443
+Pop     0.11307836 -0.46723456  0.0770210971 -0.03210513 -0.08317034
+NW     -0.29358647 -0.22801119  0.0788156621  0.23925971 -0.36079387
+U1      0.04050137  0.00807439 -0.6590290980 -0.18279096 -0.13136873
+U2      0.01812228 -0.27971336 -0.5785006293 -0.06889312 -0.13499487
+Wealth  0.37970331 -0.07718862  0.0100647664  0.11781752  0.01167683
+Ineq   -0.36579778 -0.02752240 -0.0002944563 -0.08066612 -0.21672823
+Prob   -0.25888661  0.15831708 -0.1176726436  0.49303389  0.16562829
+Time   -0.02062867
+
+
+A MODEL (REGRESSION) per node
+r^2 is IMPORTANT TO SEE IF THE REGRESSION IS GOOD (percentage of variance explained by model)
+Logistic regression pseudo-R-Squared
+
+USE A TREE WITH REGRESSION
+At least 5% of the data per leaf not to overfit
+Algorithm -- take half the data and look for variables and values that when we break up give a good model (good variance r^2)..... after branching go backwards with the other half of the data...
+
+RANDOM FORESTS--- https://courses.edx.org/courses/course-v1:GTx+ISYE6501x+2T2019b/courseware/73b478890ff7426d98624678f82d1cc1/204bdfbdfe4844459a7f027bbb92b088/1?activate_block_id=block-v1%3AGTx%2BISYE6501x%2B2T2019b%2Btype%40vertical%2Bblock%409737a66ad8e442b8b1421630a4dbfcc4
+Random take a subset of points (including some points more than once)
+500-1000 trees in a random forest
+Do not prune the trees
+
+  USE all trees (regression) use average value
+  USE mode for classification model
 
 https://rpubs.com/mstapleton6/HW6-PCA
 https://stats.stackexchange.com/questions/229092/how-to-reverse-pca-and-reconstruct-original-variables-from-several-principal-com
@@ -45,6 +152,17 @@ function(a,b){ 2.5 + 0.0625*a + 0.625*b }
 GOING AGAIN (without the dependent. Variable)
 
 pca=prcomp(dat[,-3], scale=TRUE, center=TRUE)
+
+***FOR THE CRIME EXAMPLE***
+summary(pca)
+
+                          PC1    PC2    PC3     PC4     PC5     PC6     PC7
+Standard deviation     2.4534 1.6739 1.4160 1.07806 0.97893 0.74377 0.56729
+Proportion of Variance 0.4013 0.1868 0.1337 0.07748 0.06389 0.03688 0.02145
+Cumulative Proportion  0.4013 0.5880 0.7217 0.79920 0.86308 0.89996 0.92142
+
+Cut off is on SD around 1
+***FOR THE CRIME EXAMPLE***
 
 PC1 has most of the variance (diagonal line). 99%
 
