@@ -1,0 +1,23 @@
+https://en.wikipedia.org/wiki/Quantile_function
+
+Cummulative Distribution Function at x is the probability that the X (random variable) will take on a value less than x.
+
+F(X,x) = Pr(X<= x)
+
+Quantile Function --inverse of the CDF-- determines (gives) x assuming p
+
+F(X,x) = Pr(X<=x)=p
+Q(p) = inf(x such that p<=F(X,x))
+
+
+https://en.wikipedia.org/wiki/Power_(statistics)
+
+The power of a binary hypothesis test is the probability that the test rejects the null hypothesis (H0) when a specific alternative hypothesis (H1) is true. The statistical power ranges from 0 to 1, and as statistical power increases, the probability of making a type II error (wrongly failing to reject the null hypothesis) decreases.
+
+Assuming mu=0 for H_0
+Power given the alternative is true that we reject H_0
+B(theta)=Pr(T_n>1.64|mu=theta)
+
+
+
+
