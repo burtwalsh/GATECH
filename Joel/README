@@ -19,5 +19,7 @@ Power given the alternative is true that we reject H_0
 B(theta)=Pr(T_n>1.64|mu=theta)
 
 
+REALLY GOOD FOR TREES AND RANDOM FORESTS
 
-
+https://www.statmethods.net/advstats/cart.html
+https://www.dataquest.io/blog/statistical-learning-for-predictive-modeling-r/

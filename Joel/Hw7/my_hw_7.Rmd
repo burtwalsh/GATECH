@@ -1,0 +1,114 @@
+---
+title: "R Notebook"
+output:
+  word_document: default
+  pdf_document: default
+  html_notebook: default
+---
+
+## Question 10.1
+
+Using the same crime data setuscrime.txtas in Questions8.2 and 9.1, find the best model you can using (a) a regression tree model, and (b) a random forest model.  In R, you can use the treepackage or the rpartpackage, and the randomForestpackage.For each model, describe one or two qualitative takeaways you get from analyzing the results (i.e., don’t just stop when you have a good model, but interpret it too)
+
+## we determine a good regression, in the previous lesson was the following:
+pred<-lm(Crime~M+Ed+Po1+U2+Ineq+Prob,data=dat)
+
+## references: https://www.statmethods.net/advstats/cart.html
+## to see how to use the fit to predict https://stats.stackexchange.com/questions/64551/how-to-use-rparts-result-in-prediction
+## metadata about file https://www.rdocumentation.org/packages/MASS/versions/7.3-51.4/topics/UScrime
+
+## https://cran.r-project.org/web/packages/rpart/vignettes/longintro.pdf
+
+The method splits on 
+```{r}
+rm(list = ls())
+set.seed(1)
+
+setwd("c:\\stuff")
+uscrime=read.table("uscrime.txt",header=T)
+dim(uscrime)
+
+library(rpart)
+train_index=sample(47,35,replace=FALSE)
+train_set=uscrime[train_index,]
+test_set=uscrime[-train_index,]
+
+fit=rpart(Crime~M+Ed+Po1+U2+Ineq+Prob,data=train_set)
+
+#plot(fit)
+#text(fit, use.n = TRUE)
+summary(fit)
+
+pr=predict(fit, test_set[,c("Crime","M","Ed","Po1","U2","Ineq","Prob")])
+table(pr,test_set[,'Crime'])
+```
+
+## Random forest reference
+### https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm#workings
+
+```{r}
+library(randomForest)
+ran=randomForest(Crime~M+Ed+Po1+U2+Ineq+Prob,data=train_set)
+ran
+pr=predict(ran, test_set[,c("Crime","M","Ed","Po1","U2","Ineq","Prob")])
+table(pr,test_set[,'Crime'])
+```
+
+## Question 10.2
+
+Describe a situation or problem from your job, everyday life, current events, etc., for which a logistic regression model would be appropriate. List some (up to 5) predictors that you might use.
+
+### Answer
+
+I could use logistic regression to answer the question as to whether I am happy or not happy in life.  Some indicators could include child's health, my health, wife's health, amount of money, amount of free time to spend with family, a feeling of fullfillment at work.
+
+
+## Question 10.3
+### Part I 
+
+Using the GermanCredit data set germancredit.txtfromhttp://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/ (description at http://archive.ics.uci.edu/ml/datasets/Statlog+%28German+Credit+Data%29), use logistic regression to find a good predictive model for whether credit applicants are good credit risks or not.  Show your model (factors used and their coefficients), the software output, and the quality of fit.  You can use the glmfunction in R. To get a logistic regression (logit) model on data where the response is either zero or one, use family=binomial(link=”logit”)in your glmfunction call.
+
+```{r}
+rm(list = ls())
+
+set.seed(1)
+
+credit=read.csv("http://freakonometrics.free.fr/german_credit.csv", header = TRUE, sep = ",")
+
+#ensure the data is numeric not just factors
+as.numeric_from_fractor <- function(x) if(is.factor(x)) as.integer(as.factor(x)) else x
+credit[] <- lapply(credit, as.numeric_from_fractor)
+
+#find relevant variablesby Pr(>|t|)
+#AIC = 2*number of estimate params - 2 LN(maximum likelyhood function)
+library(olsrr)
+#h=ols_step_backward_aic(lm(Creditability~.,data=credit))
+
+# Split data into test and training using 0.70 (could use cross-validation later)
+train_index=sample(1000,700,replace=FALSE)
+train_set=credit[train_index,]
+test_set=credit[-train_index,]
+
+logit=glm(Creditability~.-Occupation-Duration.in.Current.address-Age..years.-No.of.dependents-Purpose,data=train_set,family=binomial(link="logit"))
+
+library(caret)
+pred=predict(logit,newdata=test_set,type="response")
+```
+
+## Part2
+
+Because the model gives a result between 0 and 1, it requires setting a threshold probability to separate between “good” and “bad” answers.  In this data set, they estimate that incorrectly identifying a bad customer as good, is 5 times worse than incorrectly classifying a good customer as bad.  Determine a good threshold probability based on your model.
+
+An inspection of the Confusion Matricies indicates a cutoff of 0.2 is close to optimal.
+
+```{r}
+for (i in seq(0.1,.9,0.1)) {
+  print(i)
+  cfm=confusionMatrix(data = as.factor(pred>i), reference = as.factor(test_set$Creditability>i))
+  print(cfm)
+}
+  
+confusionMatrix(data = as.factor(pred>.2), reference = as.factor(test_set$Creditability>0.2))
+```
+
+

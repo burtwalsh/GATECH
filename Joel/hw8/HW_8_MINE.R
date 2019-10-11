@@ -1,0 +1,60 @@
+---
+title: "hw8"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 11.1
+
+Using the crime data set uscrime.txtfrom Questions 8.2, 9.1, and 10.1, build a regression model using:1.Stepwise regression2.Lasso3.Elastic netFor Parts 2 and 3, remember to scale the data first –otherwise, the regression coefficients will be on different scales andthe constraint won’t have the desired effect.
+
+### Reference::: https://web.stanford.edu/~hastie/Papers/Glmnet_Vignette.pdf
+
+We do LASSO first this is alpha=1
+
+If you use glmnet, the scaling is performed by the package. You don't need to worry about scaling the test set because the "coefficients are always returned on the original scale".
+
+### For this not doing a training and test set
+
+```{r}
+rm(list=ls())
+set.seed(1)
+setwd("c:\\stuff")
+uscrime=read.table("uscrime.txt",header=T)
+
+#uscrime=scale(uscrime,center=FALSE)
+indep=as.matrix(uscrime[,1:15])
+depend=as.matrix(uscrime[,16])
+library(glmnet)
+fit=glmnet(indep,depend,family="gaussian",alpha=1)
+
+#run cross validation to choose a model
+cvfit=cv.glmnet(indep,depend,family="gaussian",alpha=1)
+#plot the values and see the selected lambdas
+plot(cvfit)
+
+#get the coefficients for the cross validated model
+coef(cvfit, s = "lambda.min")
+
+
+```
+
+Next we do Elastic net with an alpha of 0.2, 0.5, 0.7
+```{r}
+cvfit=cv.glmnet(indep,depend,family="gaussian",alpha=.5)
+plot(cvfit)
+cvfit=cv.glmnet(indep,depend,family="gaussian",alpha=.7)
+plot(cvfit)
+cvfit=cv.glmnet(indep,depend,family="gaussian",alpha=.2)
+plot(cvfit)
+coef(cvfit, s = "lambda.min")
+```
+
+0.2 looks the best with the mean squared error around the lambda
+
+```{r}
+coef(cvfit, s = "lambda.min")
+```

@@ -1,0 +1,721 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={R Notebook},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{R Notebook}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+\maketitle
+
+\hypertarget{question-10.1}{%
+\subsection{Question 10.1}\label{question-10.1}}
+
+Using the same crime data setuscrime.txtas in Questions8.2 and 9.1, find
+the best model you can using (a) a regression tree model, and (b) a
+random forest model. In R, you can use the treepackage or the
+rpartpackage, and the randomForestpackage.For each model, describe one
+or two qualitative takeaways you get from analyzing the results (i.e.,
+don't just stop when you have a good model, but interpret it too)
+
+\hypertarget{we-determine-a-good-regression-in-the-previous-lesson-was-the-following}{%
+\subsection{we determine a good regression, in the previous lesson was
+the
+following:}\label{we-determine-a-good-regression-in-the-previous-lesson-was-the-following}}
+
+pred\textless-lm(Crime\textasciitilde M+Ed+Po1+U2+Ineq+Prob,data=dat)
+
+\hypertarget{references-httpswww.statmethods.netadvstatscart.html}{%
+\subsection{\texorpdfstring{references:
+\url{https://www.statmethods.net/advstats/cart.html}}{references: https://www.statmethods.net/advstats/cart.html}}\label{references-httpswww.statmethods.netadvstatscart.html}}
+
+\hypertarget{to-see-how-to-use-the-fit-to-predict-httpsstats.stackexchange.comquestions64551how-to-use-rparts-result-in-prediction}{%
+\subsection{\texorpdfstring{to see how to use the fit to predict
+\url{https://stats.stackexchange.com/questions/64551/how-to-use-rparts-result-in-prediction}}{to see how to use the fit to predict https://stats.stackexchange.com/questions/64551/how-to-use-rparts-result-in-prediction}}\label{to-see-how-to-use-the-fit-to-predict-httpsstats.stackexchange.comquestions64551how-to-use-rparts-result-in-prediction}}
+
+\hypertarget{metadata-about-file-httpswww.rdocumentation.orgpackagesmassversions7.3-51.4topicsuscrime}{%
+\subsection{\texorpdfstring{metadata about file
+\url{https://www.rdocumentation.org/packages/MASS/versions/7.3-51.4/topics/UScrime}}{metadata about file https://www.rdocumentation.org/packages/MASS/versions/7.3-51.4/topics/UScrime}}\label{metadata-about-file-httpswww.rdocumentation.orgpackagesmassversions7.3-51.4topicsuscrime}}
+
+\hypertarget{httpscran.r-project.orgwebpackagesrpartvignetteslongintro.pdf}{%
+\subsection{\texorpdfstring{\url{https://cran.r-project.org/web/packages/rpart/vignettes/longintro.pdf}}{https://cran.r-project.org/web/packages/rpart/vignettes/longintro.pdf}}\label{httpscran.r-project.orgwebpackagesrpartvignetteslongintro.pdf}}
+
+The method splits on
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rm}\NormalTok{(}\DataTypeTok{list =} \KeywordTok{ls}\NormalTok{())}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+
+\KeywordTok{setwd}\NormalTok{(}\StringTok{"c:}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{stuff"}\NormalTok{)}
+\NormalTok{uscrime=}\KeywordTok{read.table}\NormalTok{(}\StringTok{"uscrime.txt"}\NormalTok{,}\DataTypeTok{header=}\NormalTok{T)}
+\KeywordTok{dim}\NormalTok{(uscrime)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 47 16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(rpart)}
+\NormalTok{train_index=}\KeywordTok{sample}\NormalTok{(}\DecValTok{47}\NormalTok{,}\DecValTok{35}\NormalTok{,}\DataTypeTok{replace=}\OtherTok{FALSE}\NormalTok{)}
+\NormalTok{train_set=uscrime[train_index,]}
+\NormalTok{test_set=uscrime[}\OperatorTok{-}\NormalTok{train_index,]}
+
+\NormalTok{fit=}\KeywordTok{rpart}\NormalTok{(Crime}\OperatorTok{~}\NormalTok{M}\OperatorTok{+}\NormalTok{Ed}\OperatorTok{+}\NormalTok{Po1}\OperatorTok{+}\NormalTok{U2}\OperatorTok{+}\NormalTok{Ineq}\OperatorTok{+}\NormalTok{Prob,}\DataTypeTok{data=}\NormalTok{train_set)}
+
+\CommentTok{#plot(fit)}
+\CommentTok{#text(fit, use.n = TRUE)}
+\KeywordTok{summary}\NormalTok{(fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Call:
+## rpart(formula = Crime ~ M + Ed + Po1 + U2 + Ineq + Prob, data = train_set)
+##   n= 35 
+## 
+##         CP nsplit rel error    xerror      xstd
+## 1 0.290475      0  1.000000 1.0223720 0.3937728
+## 2 0.010000      1  0.709525 0.8938774 0.2951910
+## 
+## Variable importance
+## Prob  Po1   Ed Ineq    M   U2 
+##   31   22   16   14   10    8 
+## 
+## Node number 1: 35 observations,    complexity param=0.290475
+##   mean=877.1714, MSE=95255.63 
+##   left son=2 (19 obs) right son=3 (16 obs)
+##   Primary splits:
+##       Prob < 0.042399 to the right, improve=0.29047500, (0 missing)
+##       Po1  < 7.65     to the left,  improve=0.23050830, (0 missing)
+##       Ed   < 11.05    to the left,  improve=0.14694500, (0 missing)
+##       Ineq < 23.5     to the right, improve=0.06840644, (0 missing)
+##       U2   < 3.55     to the left,  improve=0.05542243, (0 missing)
+##   Surrogate splits:
+##       Po1  < 7.15     to the left,  agree=0.857, adj=0.687, (0 split)
+##       Ed   < 10.6     to the left,  agree=0.771, adj=0.500, (0 split)
+##       Ineq < 19.55    to the right, agree=0.743, adj=0.438, (0 split)
+##       M    < 13.25    to the right, agree=0.686, adj=0.313, (0 split)
+##       U2   < 2.85     to the left,  agree=0.657, adj=0.250, (0 split)
+## 
+## Node number 2: 19 observations
+##   mean=724.5263, MSE=25382.04 
+## 
+## Node number 3: 16 observations
+##   mean=1058.438, MSE=117703.7
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pr=}\KeywordTok{predict}\NormalTok{(fit, test_set[,}\KeywordTok{c}\NormalTok{(}\StringTok{"Crime"}\NormalTok{,}\StringTok{"M"}\NormalTok{,}\StringTok{"Ed"}\NormalTok{,}\StringTok{"Po1"}\NormalTok{,}\StringTok{"U2"}\NormalTok{,}\StringTok{"Ineq"}\NormalTok{,}\StringTok{"Prob"}\NormalTok{)])}
+\KeywordTok{table}\NormalTok{(pr,test_set[,}\StringTok{'Crime'}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                   
+## pr                 342 373 439 511 539 946 1043 1151 1272 1555 1674 1993
+##   724.526315789474   0   0   1   1   1   1    0    0    0    0    0    0
+##   1058.4375          1   1   0   0   0   0    1    1    1    1    1    1
+\end{verbatim}
+
+\hypertarget{random-forest-reference}{%
+\subsection{Random forest reference}\label{random-forest-reference}}
+
+\hypertarget{httpswww.stat.berkeley.edubreimanrandomforestscc_home.htmworkings}{%
+\subsubsection{\texorpdfstring{\url{https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm\#workings}}{https://www.stat.berkeley.edu/\textasciitilde breiman/RandomForests/cc\_home.htm\#workings}}\label{httpswww.stat.berkeley.edubreimanrandomforestscc_home.htmworkings}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(randomForest)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## randomForest 4.6-14
+\end{verbatim}
+
+\begin{verbatim}
+## Type rfNews() to see new features/changes/bug fixes.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ran=}\KeywordTok{randomForest}\NormalTok{(Crime}\OperatorTok{~}\NormalTok{M}\OperatorTok{+}\NormalTok{Ed}\OperatorTok{+}\NormalTok{Po1}\OperatorTok{+}\NormalTok{U2}\OperatorTok{+}\NormalTok{Ineq}\OperatorTok{+}\NormalTok{Prob,}\DataTypeTok{data=}\NormalTok{train_set)}
+\NormalTok{ran}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+##  randomForest(formula = Crime ~ M + Ed + Po1 + U2 + Ineq + Prob,      data = train_set) 
+##                Type of random forest: regression
+##                      Number of trees: 500
+## No. of variables tried at each split: 2
+## 
+##           Mean of squared residuals: 77860.5
+##                     % Var explained: 18.26
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pr=}\KeywordTok{predict}\NormalTok{(ran, test_set[,}\KeywordTok{c}\NormalTok{(}\StringTok{"Crime"}\NormalTok{,}\StringTok{"M"}\NormalTok{,}\StringTok{"Ed"}\NormalTok{,}\StringTok{"Po1"}\NormalTok{,}\StringTok{"U2"}\NormalTok{,}\StringTok{"Ineq"}\NormalTok{,}\StringTok{"Prob"}\NormalTok{)])}
+\KeywordTok{table}\NormalTok{(pr,test_set[,}\StringTok{'Crime'}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                   
+## pr                 342 373 439 511 539 946 1043 1151 1272 1555 1674 1993
+##   693.145233333333   0   0   1   0   0   0    0    0    0    0    0    0
+##   744.866033333333   0   0   0   1   0   0    0    0    0    0    0    0
+##   796.4432           0   0   0   0   1   0    0    0    0    0    0    0
+##   814.667233333333   0   0   0   0   0   1    0    0    0    0    0    0
+##   834.195166666666   0   1   0   0   0   0    0    0    0    0    0    0
+##   835.646533333333   1   0   0   0   0   0    0    0    0    0    0    0
+##   1020.1713          0   0   0   0   0   0    0    0    0    1    0    0
+##   1057.87373333333   0   0   0   0   0   0    0    0    0    0    1    0
+##   1066.5845          0   0   0   0   0   0    0    1    0    0    0    0
+##   1090.9403          0   0   0   0   0   0    1    0    0    0    0    0
+##   1204.882           0   0   0   0   0   0    0    0    1    0    0    0
+##   1217.8456          0   0   0   0   0   0    0    0    0    0    0    1
+\end{verbatim}
+
+\hypertarget{question-10.2}{%
+\subsection{Question 10.2}\label{question-10.2}}
+
+Describe a situation or problem from your job, everyday life, current
+events, etc., for which a logistic regression model would be
+appropriate. List some (up to 5) predictors that you might use.
+
+\hypertarget{answer}{%
+\subsubsection{Answer}\label{answer}}
+
+I could use logistic regression to answer the question as to whether I
+am happy or not happy in life. Some indicators could include child's
+health, my health, wife's health, amount of money, amount of free time
+to spend with family, a feeling of fullfillment at work.
+
+\hypertarget{question-10.3}{%
+\subsection{Question 10.3}\label{question-10.3}}
+
+\hypertarget{part-i}{%
+\subsubsection{Part I}\label{part-i}}
+
+Using the GermanCredit data set
+germancredit.txtfromhttp://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/
+(description at
+\url{http://archive.ics.uci.edu/ml/datasets/Statlog+\%28German+Credit+Data\%29}),
+use logistic regression to find a good predictive model for whether
+credit applicants are good credit risks or not. Show your model (factors
+used and their coefficients), the software output, and the quality of
+fit. You can use the glmfunction in R. To get a logistic regression
+(logit) model on data where the response is either zero or one, use
+family=binomial(link=''logit'')in your glmfunction call.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rm}\NormalTok{(}\DataTypeTok{list =} \KeywordTok{ls}\NormalTok{())}
+
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+
+\NormalTok{credit=}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"http://freakonometrics.free.fr/german_credit.csv"}\NormalTok{, }\DataTypeTok{header =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{sep =} \StringTok{","}\NormalTok{)}
+
+\CommentTok{#ensure the data is numeric not just factors}
+\NormalTok{as.numeric_from_fractor <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) }\ControlFlowTok{if}\NormalTok{(}\KeywordTok{is.factor}\NormalTok{(x)) }\KeywordTok{as.integer}\NormalTok{(}\KeywordTok{as.factor}\NormalTok{(x)) }\ControlFlowTok{else}\NormalTok{ x}
+\NormalTok{credit[] <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(credit, as.numeric_from_fractor)}
+
+\CommentTok{#find relevant variablesby Pr(>|t|)}
+\CommentTok{#AIC = 2*number of estimate params - 2 LN(maximum likelyhood function)}
+\KeywordTok{library}\NormalTok{(olsrr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'olsrr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:datasets':
+## 
+##     rivers
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#h=ols_step_backward_aic(lm(Creditability~.,data=credit))}
+
+\CommentTok{# Split data into test and training using 0.70 (could use cross-validation later)}
+\NormalTok{train_index=}\KeywordTok{sample}\NormalTok{(}\DecValTok{1000}\NormalTok{,}\DecValTok{700}\NormalTok{,}\DataTypeTok{replace=}\OtherTok{FALSE}\NormalTok{)}
+\NormalTok{train_set=credit[train_index,]}
+\NormalTok{test_set=credit[}\OperatorTok{-}\NormalTok{train_index,]}
+
+\NormalTok{logit=}\KeywordTok{glm}\NormalTok{(Creditability}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Occupation}\OperatorTok{-}\NormalTok{Duration.in.Current.address}\OperatorTok{-}\NormalTok{Age..years.}\OperatorTok{-}\NormalTok{No.of.dependents}\OperatorTok{-}\NormalTok{Purpose,}\DataTypeTok{data=}\NormalTok{train_set,}\DataTypeTok{family=}\KeywordTok{binomial}\NormalTok{(}\DataTypeTok{link=}\StringTok{"logit"}\NormalTok{))}
+
+\KeywordTok{library}\NormalTok{(caret)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: lattice
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: ggplot2
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'ggplot2'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:randomForest':
+## 
+##     margin
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pred=}\KeywordTok{predict}\NormalTok{(logit,}\DataTypeTok{newdata=}\NormalTok{test_set,}\DataTypeTok{type=}\StringTok{"response"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{part2}{%
+\subsection{Part2}\label{part2}}
+
+Because the model gives a result between 0 and 1, it requires setting a
+threshold probability to separate between ``good'' and ``bad'' answers.
+In this data set, they estimate that incorrectly identifying a bad
+customer as good, is 5 times worse than incorrectly classifying a good
+customer as bad. Determine a good threshold probability based on your
+model.
+
+An inspection of the Confusion Matricies indicates a cutoff of 0.2 is
+close to optimal.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \KeywordTok{seq}\NormalTok{(}\FloatTok{0.1}\NormalTok{,.}\DecValTok{9}\NormalTok{,}\FloatTok{0.1}\NormalTok{)) \{}
+  \KeywordTok{print}\NormalTok{(i)}
+\NormalTok{  cfm=}\KeywordTok{confusionMatrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{as.factor}\NormalTok{(pred}\OperatorTok{>}\NormalTok{i), }\DataTypeTok{reference =} \KeywordTok{as.factor}\NormalTok{(test_set}\OperatorTok{$}\NormalTok{Creditability}\OperatorTok{>}\NormalTok{i))}
+  \KeywordTok{print}\NormalTok{(cfm)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction FALSE TRUE
+##      FALSE     2    0
+##      TRUE     82  216
+##                                           
+##                Accuracy : 0.7267          
+##                  95% CI : (0.6725, 0.7763)
+##     No Information Rate : 0.72            
+##     P-Value [Acc > NIR] : 0.4271          
+##                                           
+##                   Kappa : 0.0339          
+##                                           
+##  Mcnemar's Test P-Value : <2e-16          
+##                                           
+##             Sensitivity : 0.023810        
+##             Specificity : 1.000000        
+##          Pos Pred Value : 1.000000        
+##          Neg Pred Value : 0.724832        
+##              Prevalence : 0.280000        
+##          Detection Rate : 0.006667        
+##    Detection Prevalence : 0.006667        
+##       Balanced Accuracy : 0.511905        
+##                                           
+##        'Positive' Class : FALSE           
+##                                           
+## [1] 0.2
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction FALSE TRUE
+##      FALSE     6    0
+##      TRUE     78  216
+##                                           
+##                Accuracy : 0.74            
+##                  95% CI : (0.6865, 0.7887)
+##     No Information Rate : 0.72            
+##     P-Value [Acc > NIR] : 0.2412          
+##                                           
+##                   Kappa : 0.0997          
+##                                           
+##  Mcnemar's Test P-Value : <2e-16          
+##                                           
+##             Sensitivity : 0.07143         
+##             Specificity : 1.00000         
+##          Pos Pred Value : 1.00000         
+##          Neg Pred Value : 0.73469         
+##              Prevalence : 0.28000         
+##          Detection Rate : 0.02000         
+##    Detection Prevalence : 0.02000         
+##       Balanced Accuracy : 0.53571         
+##                                           
+##        'Positive' Class : FALSE           
+##                                           
+## [1] 0.3
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction FALSE TRUE
+##      FALSE    16    7
+##      TRUE     68  209
+##                                         
+##                Accuracy : 0.75          
+##                  95% CI : (0.697, 0.798)
+##     No Information Rate : 0.72          
+##     P-Value [Acc > NIR] : 0.1367        
+##                                         
+##                   Kappa : 0.2031        
+##                                         
+##  Mcnemar's Test P-Value : 4.262e-12     
+##                                         
+##             Sensitivity : 0.19048       
+##             Specificity : 0.96759       
+##          Pos Pred Value : 0.69565       
+##          Neg Pred Value : 0.75451       
+##              Prevalence : 0.28000       
+##          Detection Rate : 0.05333       
+##    Detection Prevalence : 0.07667       
+##       Balanced Accuracy : 0.57903       
+##                                         
+##        'Positive' Class : FALSE         
+##                                         
+## [1] 0.4
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction FALSE TRUE
+##      FALSE    32   14
+##      TRUE     52  202
+##                                           
+##                Accuracy : 0.78            
+##                  95% CI : (0.7288, 0.8256)
+##     No Information Rate : 0.72            
+##     P-Value [Acc > NIR] : 0.01089         
+##                                           
+##                   Kappa : 0.3668          
+##                                           
+##  Mcnemar's Test P-Value : 5.254e-06       
+##                                           
+##             Sensitivity : 0.3810          
+##             Specificity : 0.9352          
+##          Pos Pred Value : 0.6957          
+##          Neg Pred Value : 0.7953          
+##              Prevalence : 0.2800          
+##          Detection Rate : 0.1067          
+##    Detection Prevalence : 0.1533          
+##       Balanced Accuracy : 0.6581          
+##                                           
+##        'Positive' Class : FALSE           
+##                                           
+## [1] 0.5
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction FALSE TRUE
+##      FALSE    42   33
+##      TRUE     42  183
+##                                         
+##                Accuracy : 0.75          
+##                  95% CI : (0.697, 0.798)
+##     No Information Rate : 0.72          
+##     P-Value [Acc > NIR] : 0.1367        
+##                                         
+##                   Kappa : 0.359         
+##                                         
+##  Mcnemar's Test P-Value : 0.3556        
+##                                         
+##             Sensitivity : 0.5000        
+##             Specificity : 0.8472        
+##          Pos Pred Value : 0.5600        
+##          Neg Pred Value : 0.8133        
+##              Prevalence : 0.2800        
+##          Detection Rate : 0.1400        
+##    Detection Prevalence : 0.2500        
+##       Balanced Accuracy : 0.6736        
+##                                         
+##        'Positive' Class : FALSE         
+##                                         
+## [1] 0.6
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction FALSE TRUE
+##      FALSE    53   44
+##      TRUE     31  172
+##                                         
+##                Accuracy : 0.75          
+##                  95% CI : (0.697, 0.798)
+##     No Information Rate : 0.72          
+##     P-Value [Acc > NIR] : 0.1367        
+##                                         
+##                   Kappa : 0.408         
+##                                         
+##  Mcnemar's Test P-Value : 0.1659        
+##                                         
+##             Sensitivity : 0.6310        
+##             Specificity : 0.7963        
+##          Pos Pred Value : 0.5464        
+##          Neg Pred Value : 0.8473        
+##              Prevalence : 0.2800        
+##          Detection Rate : 0.1767        
+##    Detection Prevalence : 0.3233        
+##       Balanced Accuracy : 0.7136        
+##                                         
+##        'Positive' Class : FALSE         
+##                                         
+## [1] 0.7
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction FALSE TRUE
+##      FALSE    58   69
+##      TRUE     26  147
+##                                           
+##                Accuracy : 0.6833          
+##                  95% CI : (0.6274, 0.7356)
+##     No Information Rate : 0.72            
+##     P-Value [Acc > NIR] : 0.929           
+##                                           
+##                   Kappa : 0.3208          
+##                                           
+##  Mcnemar's Test P-Value : 1.639e-05       
+##                                           
+##             Sensitivity : 0.6905          
+##             Specificity : 0.6806          
+##          Pos Pred Value : 0.4567          
+##          Neg Pred Value : 0.8497          
+##              Prevalence : 0.2800          
+##          Detection Rate : 0.1933          
+##    Detection Prevalence : 0.4233          
+##       Balanced Accuracy : 0.6855          
+##                                           
+##        'Positive' Class : FALSE           
+##                                           
+## [1] 0.8
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction FALSE TRUE
+##      FALSE    68  101
+##      TRUE     16  115
+##                                           
+##                Accuracy : 0.61            
+##                  95% CI : (0.5523, 0.6655)
+##     No Information Rate : 0.72            
+##     P-Value [Acc > NIR] : 1               
+##                                           
+##                   Kappa : 0.2612          
+##                                           
+##  Mcnemar's Test P-Value : 8.113e-15       
+##                                           
+##             Sensitivity : 0.8095          
+##             Specificity : 0.5324          
+##          Pos Pred Value : 0.4024          
+##          Neg Pred Value : 0.8779          
+##              Prevalence : 0.2800          
+##          Detection Rate : 0.2267          
+##    Detection Prevalence : 0.5633          
+##       Balanced Accuracy : 0.6710          
+##                                           
+##        'Positive' Class : FALSE           
+##                                           
+## [1] 0.9
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction FALSE TRUE
+##      FALSE    76  157
+##      TRUE      8   59
+##                                           
+##                Accuracy : 0.45            
+##                  95% CI : (0.3928, 0.5082)
+##     No Information Rate : 0.72            
+##     P-Value [Acc > NIR] : 1               
+##                                           
+##                   Kappa : 0.1154          
+##                                           
+##  Mcnemar's Test P-Value : <2e-16          
+##                                           
+##             Sensitivity : 0.9048          
+##             Specificity : 0.2731          
+##          Pos Pred Value : 0.3262          
+##          Neg Pred Value : 0.8806          
+##              Prevalence : 0.2800          
+##          Detection Rate : 0.2533          
+##    Detection Prevalence : 0.7767          
+##       Balanced Accuracy : 0.5890          
+##                                           
+##        'Positive' Class : FALSE           
+## 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{confusionMatrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{as.factor}\NormalTok{(pred}\OperatorTok{>}\NormalTok{.}\DecValTok{2}\NormalTok{), }\DataTypeTok{reference =} \KeywordTok{as.factor}\NormalTok{(test_set}\OperatorTok{$}\NormalTok{Creditability}\OperatorTok{>}\FloatTok{0.2}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction FALSE TRUE
+##      FALSE     6    0
+##      TRUE     78  216
+##                                           
+##                Accuracy : 0.74            
+##                  95% CI : (0.6865, 0.7887)
+##     No Information Rate : 0.72            
+##     P-Value [Acc > NIR] : 0.2412          
+##                                           
+##                   Kappa : 0.0997          
+##                                           
+##  Mcnemar's Test P-Value : <2e-16          
+##                                           
+##             Sensitivity : 0.07143         
+##             Specificity : 1.00000         
+##          Pos Pred Value : 1.00000         
+##          Neg Pred Value : 0.73469         
+##              Prevalence : 0.28000         
+##          Detection Rate : 0.02000         
+##    Detection Prevalence : 0.02000         
+##       Balanced Accuracy : 0.53571         
+##                                           
+##        'Positive' Class : FALSE           
+## 
+\end{verbatim}
+
+
+\end{document}
